@@ -18,7 +18,7 @@ chrome.contextMenus.create({
   onclick: function(info, tab){
     var selectionText = info.selectionText;
     var translateTextUrl = "https://translate.google.com.tr/?hl=tr#en/tr/"+selectionText;
-    createTab(translateTextUrl);   
+    openWindow(translateTextUrl);
   }
 });
 
@@ -47,5 +47,19 @@ chrome.contextMenus.create({
 
 // common funcs
 function createTab(url) {
-  chrome.tabs.create({"url" : encodeURI(url) });
+  var tabProperties = {"url" : encodeURI(url)};
+  chrome.tabs.create(tabProperties);
+}
+
+var createdWindowId = 0;
+
+function openWindow(url){
+  if(createdWindowId != 0) {
+    chrome.windows.remove(createdWindowId);
+  }
+  
+  chrome.windows.create({'url': url, 'type': 'popup'}, function(window) {
+      createdWindowId = window.id;
+  });
+
 }
